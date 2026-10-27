@@ -1,0 +1,58 @@
+{
+  "name": "kit-ar-livre-augmente",
+  "productName": "Kit Livre Augmenté",
+  "version": "1.0.0",
+  "description": "Faire parler les illustrations d'un livre : vidéos en réalité augmentée et sons déclenchés par la caméra.",
+  "author": "biblio.gironde",
+  "license": "MIT",
+  "homepage": "https://bibliogironde.github.io/Kit-AR-Livre-Augmente/",
+  "repository": { "type": "git", "url": "https://github.com/biblioGironde/Kit-AR-Livre-Augmente.git" },
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "web": "npx --yes http-server www -p 8080 -c-1",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "fr.gironde.biblio.kitlivreaugmente",
+    "productName": "Kit Livre Augmenté",
+    "artifactName": "Kit-Livre-Augmente-${version}-${os}-${arch}.${ext}",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["electron/**", "www/**", "build/icon.png", "package.json"],
+    "mac": {
+      "category": "public.app-category.education",
+      "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }],
+      "icon": "build/icon.png",
+      "identity": null,
+      "extendInfo": {
+        "NSCameraUsageDescription": "La caméra sert à photographier les illustrations et à les reconnaître pendant la lecture.",
+        "NSMicrophoneUsageDescription": "Le micro sert à enregistrer des voix et des bruitages dans le studio son."
+      }
+    },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Kit-Livre-Augmente-${version}-installation-windows.${ext}"
+    },
+    "portable": { "artifactName": "Kit-Livre-Augmente-${version}-portable-windows.${ext}" },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Education",
+      "icon": "build/icon.png",
+      "maintainer": "biblio.gironde"
+    },
+    "publish": { "provider": "github", "owner": "biblioGironde", "repo": "Kit-AR-Livre-Augmente", "releaseType": "release" }
+  }
+}
