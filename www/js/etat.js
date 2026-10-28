@@ -71,7 +71,7 @@ export async function supprimerLivre(id) {
 export const livreParId = (id) => etat.livres.find((l) => l.id === id);
 
 export const OPTIONS_DEFAUT = {
-  video: { taille: 1, decalage: 0, opacite: 1, boucle: true, son: true, debut: false, chroma: false, chromaCouleur: '#00ff00', chromaTol: 0.25 },
+  video: { taille: 1, decalage: 0, decalageX: 0, opacite: 1, boucle: true, son: true, debut: false, chroma: false, chromaCouleur: '#00ff00', chromaTol: 0.25 },
   son: { volume: 1, boucle: false, arret: true, debut: true },
 };
 
