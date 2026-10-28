@@ -198,6 +198,9 @@ async function majComposite() {
       apercuImageVersion = brouillon.imageVersion + ':' + brouillon.id;
       await apercu.definirPage(brouillon.image, brouillon.largeur, brouillon.hauteur);
     }
+    const calque = localStorageLire('calque-apercu');
+    if (calque !== null) { $('#composite-calque').value = calque; $('#composite-calque').dispatchEvent(new Event('input')); }
+    apercu.definirCalque(parseFloat($('#composite-calque').value));
     apercu.definirOptions(brouillon.action.video);
     apercu.definirVideo(media);
     apercu.definirOptions(brouillon.action.video);
@@ -208,6 +211,11 @@ async function majComposite() {
     $('#page-composite').hidden = true; $('#page-apercu').hidden = false; $('#page-video-apercu').hidden = false;
   }
 }
+lierSortie($('#composite-calque'), (v) => Math.round(v * 100) + ' %');
+$('#composite-calque').addEventListener('input', (e) => {
+  apercu?.definirCalque(parseFloat(e.target.value));
+  localStorageEcrire('calque-apercu', e.target.value);
+});
 $('#composite-lecture').onclick = () => {
   if (!apercu) return;
   const lit = apercu.basculerLecture();
@@ -428,6 +436,9 @@ async function lire(livre) {
     });
     const camMemo = localStorageLire('camera-lecture');
     if (camMemo) lecteur.cameraId = camMemo;
+    const suivi = localStorageLire('mode-suivi') || 'equilibre';
+    lecteur.modeSuivi = suivi;
+    $('#lecture-suivi').value = suivi;
     await lecteur.preparer();
     $('#demarrage-titre').textContent = 'Prêt !';
     $('#demarrage-texte').textContent = 'La caméra va s\'allumer. Montrez ensuite une illustration du livre.';
@@ -477,6 +488,10 @@ function quitterLecture() {
   if (livreCourant) rendrePages();
 }
 $('#lecture-quitter').onclick = quitterLecture;
+$('#lecture-suivi').onchange = (e) => {
+  lecteur?.definirModeSuivi(e.target.value);
+  localStorageEcrire('mode-suivi', e.target.value);
+};
 $('#lecture-plein').onclick = () => {
   if (document.fullscreenElement) document.exitFullscreen();
   else $('#lecture').requestFullscreen?.().catch(() => {});
