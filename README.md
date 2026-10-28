@@ -13,6 +13,7 @@ Tout reste dans l'appareil (IndexedDB). Rien n'est envoyé sur Internet.
 |---|---|
 | **Livres et pages** | Une page = une illustration. Photo depuis la caméra de l'appli ou import d'image, recadrage, rotation. |
 | **Vidéo AR** | Vidéo plaquée sur l'illustration et suivie en temps réel. **Aperçu en direct** dans la fiche de la page (même rendu que la lecture) : glisser pour placer la vidéo, molette ou pincer pour l'agrandir, double-clic pour recentrer ; la page reste visible à travers la vidéo pour la caler. Taille, décalages horizontal et vertical, opacité, boucle, son, reprise au début, **incrustation fond vert** (couleur et tolérance réglables). |
+| **Vidéos de téléphone** | Converties à l'import (720p, couleurs standard, MP4 H.264 ou WebM) : les vidéos HEVC, HDR ou 4K ne restent plus noires. Une vidéo illisible par l'appareil affiche comment l'obtenir en format compatible. |
 | **Son** | Volume, boucle, arrêt quand l'illustration sort du champ ou lecture jusqu'au bout. |
 | **Studio son** | Sonothèque (import MP3/WAV/OGG…, enregistrement micro avec vumètre), montage : enchaîner plusieurs morceaux, couper chaque morceau sur la forme d'onde, fond sonore mixé, fondus, volume, normalisation → export WAV dans la sonothèque. |
 | **Partage** | Export d'un livre complet en `.zip` (illustrations, médias, cibles déjà analysées) et import sur un autre appareil. QR code de lecture directe vers un `.zip` publié en ligne. |
@@ -54,6 +55,7 @@ www/
   js/cibles.js     analyse des illustrations (compilateur MindAR)
   js/plan-video.js plan vidéo + shader d'incrustation, partagé par la lecture et l'aperçu
   js/apercu.js     aperçu en direct dans l'éditeur de page
+  js/video.js      conversion des vidéos importées (720p SDR)
   js/ar.js         lecture AR (MindAR + three.js)
   js/archive.js    export / import .zip
   livres/          .zip publiés (QR codes)

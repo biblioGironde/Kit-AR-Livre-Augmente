@@ -3,7 +3,7 @@
 // Interactions : glisser = déplacer, molette / pincer = agrandir, double-clic = recentrer.
 import * as THREE from 'three';
 import { creerPlanVideo } from './plan-video.js';
-import { urlDe } from './outils.js';
+import { urlDe, attacherVideo } from './outils.js';
 
 const MARGE = 1.35; // l'illustration occupe ~75 % de la vue : on voit ce qui déborde
 
@@ -26,6 +26,8 @@ export class ApercuPage {
     this.video.loop = true;
     this.video.playsInline = true;
     this.video.setAttribute('playsinline', '');
+    this.video.setAttribute('muted', '');
+    attacherVideo(this.video);
 
     // Illustration
     this.matPage = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -238,5 +240,6 @@ export class ApercuPage {
     this.matCadre.dispose();
     this.matCalque.dispose();
     this.renderer.dispose();
+    this.video.remove();
   }
 }

@@ -311,11 +311,21 @@ $('#page-recadrer').onclick = () => brouillon.image && definirImage(brouillon.im
 $('#page-fichier-video').onchange = async (e) => {
   const f = e.target.files[0]; e.target.value = '';
   if (!f) return;
-  attente('Import de la vidéo…');
+  attente('Analyse de la vidéo…');
   try {
-    const m = await ajouterMedia({ blob: f, type: 'video', nom: f.name.replace(/\.[^.]+$/, '') });
+    const { raisonConversion, convertirVideo } = await import('./video.js');
+    const raison = await raisonConversion(f);
+    let blob = f, sansSon = false;
+    if (raison) {
+      // vidéo de téléphone (HEVC, HDR, 4K, .mov…) : conversion en 720p lisible partout
+      attente('Préparation de la vidéo pour la réalité augmentée… Gardez cette page ouverte.', 0);
+      const r = await convertirVideo(f, (p) => attente('Préparation de la vidéo pour la réalité augmentée… Gardez cette page ouverte.', p));
+      blob = r.blob; sansSon = r.sansSon;
+    }
+    const m = await ajouterMedia({ blob, type: 'video', nom: f.name.replace(/\.[^.]+$/, '') });
     brouillon.action.mediaId = m.id;
     rendreSelecteursMedias();
+    if (sansSon) toast('Vidéo importée sans son (le navigateur a refusé de lire le son pendant la conversion).');
   } catch (err) { toast(err.message, true); }
   attente(false);
 };

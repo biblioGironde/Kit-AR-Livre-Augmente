@@ -115,3 +115,18 @@ export async function listerCameras() {
     return d.filter((x) => x.kind === 'videoinput');
   } catch { return []; }
 }
+
+// Conteneur invisible pour les <video> utilisées comme textures (certains mobiles ne décodent pas hors du document)
+export function attacherVideo(v) {
+  let c = document.getElementById('videos-cachees');
+  if (!c) {
+    c = document.createElement('div');
+    c.id = 'videos-cachees';
+    c.setAttribute('aria-hidden', 'true');
+    Object.assign(c.style, { position: 'fixed', left: '0', top: '0', width: '2px', height: '2px', overflow: 'hidden', opacity: '0.01', pointerEvents: 'none', zIndex: '-1' });
+    document.body.appendChild(c);
+  }
+  Object.assign(v.style, { width: '2px', height: '2px' });
+  c.appendChild(v);
+  return v;
+}
