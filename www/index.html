@@ -169,6 +169,11 @@
   <div class="lecture-haut">
     <button class="btn rond" id="lecture-quitter" aria-label="Quitter">✕</button>
     <div class="lecture-titre" id="lecture-titre"></div>
+    <select id="lecture-suivi" class="champ sombre" aria-label="Suivi de la page" title="Réactif : la vidéo colle à la page mais peut trembler. Stable : plus lisse mais suit avec un léger retard.">
+      <option value="reactif">Suivi réactif</option>
+      <option value="equilibre">Suivi équilibré</option>
+      <option value="stable">Suivi stable</option>
+    </select>
     <select id="lecture-camera" class="champ sombre" aria-label="Caméra"></select>
     <button class="btn rond" id="lecture-plein" aria-label="Plein écran">⛶</button>
   </div>
@@ -203,7 +208,11 @@
             <button type="button" class="btn rond petit-rond" id="composite-lecture" aria-label="Pause">❚❚</button>
             <span class="composite-aide">Glisser pour déplacer · molette ou pincer pour agrandir · double-clic pour recentrer</span>
           </div>
-          <span class="composite-legende">Aperçu fidèle à la lecture AR — le cadre orange est le bord de l'illustration</span>
+          <label class="composite-calque" title="Redessine l'illustration par-dessus la vidéo pour la caler (aperçu seulement)">
+            Voir la page à travers la vidéo
+            <input type="range" id="composite-calque" min="0" max="0.9" step="0.05" value="0.35"> <output></output>
+          </label>
+          <span class="composite-legende">Le cadre orange est le bord de l'illustration. La page vue à travers n'apparaît que dans l'aperçu.</span>
         </div>
         <div class="boutons-ligne">
           <button type="button" class="btn secondaire" id="page-photo">📷 Photographier</button>

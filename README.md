@@ -12,7 +12,7 @@ Tout reste dans l'appareil (IndexedDB). Rien n'est envoyé sur Internet.
 | | |
 |---|---|
 | **Livres et pages** | Une page = une illustration. Photo depuis la caméra de l'appli ou import d'image, recadrage, rotation. |
-| **Vidéo AR** | Vidéo plaquée sur l'illustration et suivie en temps réel. **Aperçu en direct** dans la fiche de la page (même rendu que la lecture) : glisser pour placer la vidéo, molette ou pincer pour l'agrandir, double-clic pour recentrer. Taille, décalages horizontal et vertical, opacité, boucle, son, reprise au début, **incrustation fond vert** (couleur et tolérance réglables). |
+| **Vidéo AR** | Vidéo plaquée sur l'illustration et suivie en temps réel. **Aperçu en direct** dans la fiche de la page (même rendu que la lecture) : glisser pour placer la vidéo, molette ou pincer pour l'agrandir, double-clic pour recentrer ; la page reste visible à travers la vidéo pour la caler. Taille, décalages horizontal et vertical, opacité, boucle, son, reprise au début, **incrustation fond vert** (couleur et tolérance réglables). |
 | **Son** | Volume, boucle, arrêt quand l'illustration sort du champ ou lecture jusqu'au bout. |
 | **Studio son** | Sonothèque (import MP3/WAV/OGG…, enregistrement micro avec vumètre), montage : enchaîner plusieurs morceaux, couper chaque morceau sur la forme d'onde, fond sonore mixé, fondus, volume, normalisation → export WAV dans la sonothèque. |
 | **Partage** | Export d'un livre complet en `.zip` (illustrations, médias, cibles déjà analysées) et import sur un autre appareil. QR code de lecture directe vers un `.zip` publié en ligne. |
@@ -23,7 +23,7 @@ Tout reste dans l'appareil (IndexedDB). Rien n'est envoyé sur Internet.
 1. **Mes livres → Nouveau livre**, puis **+ Ajouter une page** pour chaque illustration.
 2. **Photographier** l'illustration à plat, de près, sans reflet, puis recadrer sur l'image seule.
 3. Choisir l'action : vidéo ou son.
-4. **Lire en réalité augmentée** : la première fois, l'appli analyse les illustrations (quelques secondes chacune), puis la caméra s'allume.
+4. **Lire en réalité augmentée** : la première fois, l'appli analyse les illustrations (quelques secondes chacune), puis la caméra s'allume. En haut de l'écran, *Suivi réactif / équilibré / stable* règle le compromis entre une vidéo qui colle à la page et une vidéo sans tremblement.
 
 Conseils : les illustrations riches en détails et contrastées sont les mieux reconnues ; éviter les aplats, les ciels unis et deux doubles pages trop semblables.
 

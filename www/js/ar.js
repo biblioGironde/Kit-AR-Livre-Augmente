@@ -3,6 +3,14 @@ import { MindARThree } from '../vendor/mindar/mindar-image-three.prod.js';
 import { urlDe } from './outils.js';
 import { creerPlanVideo } from './plan-video.js';
 
+// Filtre de lissage du suivi (One Euro) : minCF = lissage au repos, beta = réactivité quand la page bouge.
+// Valeurs MindAR par défaut : minCF 0.001, beta 1000.
+export const MODES_SUIVI = {
+  reactif: { filterMinCF: 0.005, filterBeta: 5000, warmupTolerance: 2, missTolerance: 4 },
+  equilibre: { filterMinCF: 0.001, filterBeta: 1000, warmupTolerance: 3, missTolerance: 5 },
+  stable: { filterMinCF: 0.0003, filterBeta: 200, warmupTolerance: 5, missTolerance: 8 },
+};
+
 export class LecteurAR {
   /**
    * @param {HTMLElement} conteneur
@@ -19,6 +27,7 @@ export class LecteurAR {
     this.textures = [];
     this.visibles = new Set();
     this.cameraId = null;
+    this.modeSuivi = 'equilibre';
   }
 
   async preparer() {
@@ -29,8 +38,7 @@ export class LecteurAR {
       imageTargetSrc: this.urlCibles,
       maxTrack: 1,
       uiLoading: 'no', uiScanning: 'no', uiError: 'no',
-      filterMinCF: 0.0001, filterBeta: 0.001, // stabilise l'image (moins de tremblements)
-      warmupTolerance: 3, missTolerance: 8,
+      ...(MODES_SUIVI[this.modeSuivi] || MODES_SUIVI.equilibre),
       environmentDeviceId: this.cameraId,
     });
 
@@ -111,6 +119,21 @@ export class LecteurAR {
     if (!this.mindar.controller) throw new Error("La caméra n'a pas pu démarrer. Vérifiez l'autorisation d'accès à la caméra.");
     const { renderer, scene, camera } = this.mindar;
     renderer.setAnimationLoop(() => renderer.render(scene, camera));
+  }
+
+  /** Change le compromis réactivité / stabilité en cours de lecture, sans redémarrer la caméra */
+  definirModeSuivi(mode) {
+    const m = MODES_SUIVI[mode];
+    if (!m) return;
+    this.modeSuivi = mode;
+    if (this.mindar) Object.assign(this.mindar, m); // conservé si la caméra redémarre
+    const c = this.mindar?.controller;
+    if (!c) return;
+    c.filterMinCF = m.filterMinCF; c.filterBeta = m.filterBeta;
+    c.warmupTolerance = m.warmupTolerance; c.missTolerance = m.missTolerance;
+    for (const t of c.trackingStates || []) {
+      if (t.filter) { t.filter.minCutOff = m.filterMinCF; t.filter.beta = m.filterBeta; }
+    }
   }
 
   async changerCamera(deviceId) {
