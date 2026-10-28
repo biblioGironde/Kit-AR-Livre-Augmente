@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kit Livre Augmenté</title>
+<meta name="description" content="Faire parler les illustrations d'un livre : vidéos en réalité augmentée et sons déclenchés par la caméra.">
+<meta name="theme-color" content="#1d3b4f">
+<link rel="icon" href="img/icone.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/app.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+</head>
+<body>
+
+<header class="barre">
+  <div class="marque" id="marque" title="Écran d'accueil" role="button" tabindex="0">
+    <img src="img/icone.png" alt="" width="34" height="34">
+    <span>Kit <b>Livre Augmenté</b></span>
+  </div>
+  <nav class="onglets" role="tablist">
+    <button class="onglet actif" data-vue="livres" role="tab">Mes livres</button>
+    <button class="onglet" data-vue="sons" role="tab">Studio son</button>
+    <button class="onglet" data-vue="aide" role="tab">Mode d'emploi</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ LISTE DES LIVRES ============ -->
+  <section id="vue-livres" class="vue active">
+    <div class="entete-vue">
+      <div>
+        <h1>Mes livres augmentés</h1>
+        <p class="sous">Chaque livre regroupe des illustrations photographiées. Quand la caméra reconnaît une illustration, la vidéo ou le son associé se déclenche.</p>
+      </div>
+      <div class="actions">
+        <label class="btn secondaire">
+          Importer un livre (.zip)
+          <input type="file" id="import-livre" accept=".zip,application/zip" hidden>
+        </label>
+        <button class="btn primaire" id="nouveau-livre">+ Nouveau livre</button>
+      </div>
+    </div>
+    <div id="liste-livres" class="grille-livres"></div>
+  </section>
+
+  <!-- ============ UN LIVRE ============ -->
+  <section id="vue-livre" class="vue">
+    <div class="entete-vue">
+      <div class="titre-edit">
+        <button class="btn lien" id="retour-livres">← Mes livres</button>
+        <input id="titre-livre" class="champ-titre" aria-label="Titre du livre" placeholder="Titre du livre">
+        <p class="sous" id="etat-cibles"></p>
+      </div>
+      <div class="actions">
+        <button class="btn secondaire" id="exporter-livre">Exporter / partager</button>
+        <button class="btn danger-lien" id="supprimer-livre">Supprimer</button>
+        <button class="btn primaire gros" id="lire-livre">▶ Lire en réalité augmentée</button>
+      </div>
+    </div>
+    <div id="liste-pages" class="grille-pages"></div>
+  </section>
+
+  <!-- ============ STUDIO SON ============ -->
+  <section id="vue-sons" class="vue">
+    <div class="entete-vue">
+      <div>
+        <h1>Studio son</h1>
+        <p class="sous">Enregistrez une voix, un bruitage, importez une musique, puis coupez, enchaînez et ajoutez un fond sonore.</p>
+      </div>
+      <div class="actions">
+        <label class="btn secondaire">
+          Importer des sons
+          <input type="file" id="import-sons" accept="audio/*" multiple hidden>
+        </label>
+        <button class="btn primaire" id="btn-enregistrer">● Enregistrer au micro</button>
+      </div>
+    </div>
+    <div class="studio">
+      <aside class="bibli-sons">
+        <h2>Sonothèque</h2>
+        <ul id="liste-sons" class="liste-sons"></ul>
+      </aside>
+      <div class="montage" id="montage">
+        <div class="vide-montage" id="montage-vide">
+          <p>Choisissez un son dans la sonothèque (bouton <b>Monter</b>) ou enregistrez-en un pour commencer un montage.</p>
+        </div>
+        <div id="montage-editeur" hidden>
+          <div class="montage-tete">
+            <input id="montage-nom" class="champ" placeholder="Nom du son final">
+            <span class="duree" id="montage-duree">0,0 s</span>
+          </div>
+
+          <h3>1. Séquence <small>les morceaux s'enchaînent dans cet ordre</small></h3>
+          <ol id="segments" class="segments"></ol>
+          <div class="ajout-segment">
+            <select id="segment-ajout" class="champ"></select>
+            <button class="btn secondaire petit" id="segment-ajouter">+ Ajouter à la suite</button>
+          </div>
+
+          <div class="onde-zone">
+            <p class="aide-onde" id="onde-titre">Couper le morceau sélectionné : faites glisser les poignées.</p>
+            <canvas id="onde" height="140"></canvas>
+            <div class="onde-actions">
+              <button class="btn secondaire petit" id="ecouter-segment">▶ Écouter ce morceau</button>
+              <span id="onde-info" class="info"></span>
+            </div>
+          </div>
+
+          <h3>2. Fond sonore <small>facultatif, mixé sous la séquence</small></h3>
+          <div class="ligne-options">
+            <select id="fond-son" class="champ"></select>
+            <label>Volume <input type="range" id="fond-volume" min="0" max="1" step="0.05" value="0.35"></label>
+            <label class="case"><input type="checkbox" id="fond-boucle" checked> en boucle</label>
+          </div>
+
+          <h3>3. Finitions</h3>
+          <div class="ligne-options">
+            <label>Fondu d'entrée <input type="range" id="fondu-entree" min="0" max="5" step="0.1" value="0"> <output></output></label>
+            <label>Fondu de sortie <input type="range" id="fondu-sortie" min="0" max="5" step="0.1" value="0.3"> <output></output></label>
+            <label>Volume <input type="range" id="gain" min="0" max="2" step="0.05" value="1"> <output></output></label>
+            <label class="case"><input type="checkbox" id="normaliser" checked> Normaliser</label>
+          </div>
+
+          <div class="montage-pied">
+            <button class="btn secondaire" id="montage-fermer">Fermer</button>
+            <button class="btn secondaire" id="montage-ecouter">▶ Écouter le résultat</button>
+            <button class="btn primaire" id="montage-enregistrer">Enregistrer dans la sonothèque</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AIDE ============ -->
+  <section id="vue-aide" class="vue">
+    <article class="aide">
+      <h1>Mode d'emploi</h1>
+      <ol class="etapes">
+        <li><b>Créez un livre</b> puis ajoutez une page par illustration à faire réagir.</li>
+        <li><b>Photographiez l'illustration</b> bien à plat, cadrée de près, sans reflet, puis recadrez sur l'image seule (sans le texte ni la table).</li>
+        <li><b>Choisissez ce qui se déclenche</b> : une vidéo qui vient se poser sur l'illustration (idéale avec un fond vert rendu transparent), ou un son de la sonothèque.</li>
+        <li><b>Lancez la lecture</b> : la première fois, l'appli analyse les illustrations (quelques secondes par page), puis il suffit de montrer le livre à la caméra.</li>
+        <li><b>Partagez</b> : exportez le livre en .zip pour l'ouvrir sur une tablette ou un autre poste, ou publiez le .zip en ligne et imprimez le QR code à coller dans le livre.</li>
+      </ol>
+      <p class="encart-fiche">Pour animer un atelier : <a href="docs/fiche-animation-1-animateur.pdf" download="Fiche-animation-Mon-histoire-augmentee-1-animateur.pdf">télécharger la fiche animation « Mon histoire augmentée » (1 animateur, PDF)</a>.</p>
+      <h2>Bien choisir les illustrations</h2>
+      <ul>
+        <li>Les images riches en détails et contrastées sont les mieux reconnues. Les aplats de couleur, les ciels unis, les dessins très simples le sont mal.</li>
+        <li>Deux illustrations trop semblables (même décor) peuvent être confondues : préférez des doubles pages bien différentes.</li>
+        <li>Éclairage homogène, pas de lampe qui se reflète sur un papier glacé.</li>
+      </ul>
+      <h2>Vidéos</h2>
+      <ul>
+        <li>Formats conseillés : MP4 (H.264) ou WebM, 720p suffit, quelques dizaines de secondes.</li>
+        <li>Une vidéo tournée sur fond vert (avec le Kit Effets Spéciaux par exemple) peut être rendue transparente : le personnage semble sortir du livre.</li>
+      </ul>
+      <h2>Sur tablette et téléphone</h2>
+      <p>L'appli fonctionne dans le navigateur (Chrome, Safari, Firefox) à l'adresse publiée sur GitHub Pages. Les livres restent enregistrés dans l'appareil. Rien n'est envoyé sur Internet.</p>
+      <p class="petit-texte">Reconnaissance d'images : MindAR (MIT) · Rendu 3D : three.js (MIT) · Archive : JSZip · QR code : qrcode-generator. Kit réalisé pour le réseau biblio.gironde.</p>
+    </article>
+  </section>
+</main>
+
+<!-- ============ LECTURE AR (plein écran) ============ -->
+<div id="lecture" class="lecture" hidden>
+  <div id="ar-scene" class="ar-scene"></div>
+  <div class="lecture-haut">
+    <button class="btn rond" id="lecture-quitter" aria-label="Quitter">✕</button>
+    <div class="lecture-titre" id="lecture-titre"></div>
+    <select id="lecture-suivi" class="champ sombre" aria-label="Suivi de la page" title="Réactif : la vidéo colle à la page mais peut trembler. Stable : plus lisse mais suit avec un léger retard.">
+      <option value="reactif">Suivi réactif</option>
+      <option value="equilibre">Suivi équilibré</option>
+      <option value="stable">Suivi stable</option>
+    </select>
+    <select id="lecture-camera" class="champ sombre" aria-label="Caméra"></select>
+    <button class="btn rond" id="lecture-plein" aria-label="Plein écran">⛶</button>
+  </div>
+  <div class="viseur" id="viseur">
+    <div class="cadre-viseur"></div>
+    <p>Montrez une illustration du livre à la caméra</p>
+  </div>
+  <div class="bulle-page" id="bulle-page" hidden></div>
+  <div class="demarrage" id="demarrage">
+    <div class="carte-demarrage">
+      <h2 id="demarrage-titre">Prêt ?</h2>
+      <p id="demarrage-texte">La caméra va s'allumer.</p>
+      <progress id="demarrage-progression" max="100" hidden></progress>
+      <button class="btn primaire gros" id="demarrer">Démarrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ÉCRAN D'ACCUEIL ============ -->
+<div id="accueil" class="accueil" role="dialog" aria-modal="true" aria-labelledby="accueil-titre" hidden>
+  <div class="accueil-carte">
+    <div class="accueil-tete">
+      <img src="img/icone.png" alt="" width="72" height="72">
+      <div>
+        <h1 id="accueil-titre">Kit Livre Augmenté</h1>
+        <p>Faites parler les illustrations d'un livre : montrez la page à la caméra, une voix, un son ou une vidéo se déclenche.</p>
+      </div>
+    </div>
+    <ol class="accueil-etapes">
+      <li><span><b>Photographiez</b> une illustration du livre</span></li>
+      <li><span><b>Associez</b> une voix, un son ou une vidéo</span></li>
+      <li><span><b>Montrez</b> la page à la caméra : elle s'anime</span></li>
+    </ol>
+    <div class="accueil-fiche">
+      <div class="fiche-icone" aria-hidden="true">PDF</div>
+      <div class="fiche-texte">
+        <b>Fiche animation « Mon histoire augmentée »</b>
+        <span>Atelier de 1 h 30 · 10 enfants de 8 à 11 ans · <strong>1 seul animateur</strong>. Déroulé minuté, préparation, fiche enfant et carte mission à imprimer (6 pages).</span>
+      </div>
+      <a class="btn secondaire" id="accueil-fiche" href="docs/fiche-animation-1-animateur.pdf" download="Fiche-animation-Mon-histoire-augmentee-1-animateur.pdf">⬇ Télécharger la fiche</a>
+    </div>
+    <div class="accueil-pied">
+      <label class="case"><input type="checkbox" id="accueil-masquer"> Ne plus afficher au démarrage</label>
+      <span class="espace"></span>
+      <button class="btn primaire gros" id="accueil-commencer">Commencer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DIALOGUES ============ -->
+<dialog id="dlg-page" class="dlg large">
+  <form method="dialog" class="dlg-corps" id="form-page">
+    <div class="dlg-tete">
+      <h2>Page</h2>
+      <button class="btn rond" value="annuler" aria-label="Fermer">✕</button>
+    </div>
+    <div class="page-edit">
+      <div class="col-image">
+        <div class="apercu-illus" id="page-apercu"><span>Aucune illustration</span></div>
+        <div class="apercu-composite" id="page-composite" hidden>
+          <canvas id="composite-canvas" aria-label="Aperçu de la vidéo posée sur l'illustration"></canvas>
+          <div class="composite-barre">
+            <button type="button" class="btn rond petit-rond" id="composite-lecture" aria-label="Pause">❚❚</button>
+            <span class="composite-aide">Glisser pour déplacer · molette ou pincer pour agrandir · double-clic pour recentrer</span>
+          </div>
+          <label class="composite-calque" title="Redessine l'illustration par-dessus la vidéo pour la caler (aperçu seulement)">
+            Voir la page à travers la vidéo
+            <input type="range" id="composite-calque" min="0" max="0.9" step="0.05" value="0.35"> <output></output>
+          </label>
+          <span class="composite-legende">Le cadre orange est le bord de l'illustration. La page vue à travers n'apparaît que dans l'aperçu.</span>
+        </div>
+        <div class="boutons-ligne">
+          <button type="button" class="btn secondaire" id="page-photo">📷 Photographier</button>
+          <label class="btn secondaire">Importer une image
+            <input type="file" id="page-fichier-image" accept="image/*" hidden>
+          </label>
+        </div>
+        <button type="button" class="btn lien" id="page-recadrer" hidden>Recadrer l'illustration</button>
+      </div>
+      <div class="col-reglages">
+        <label class="bloc">Titre de la page
+          <input id="page-titre" class="champ" placeholder="ex. Le loup dans la forêt">
+        </label>
+
+        <fieldset class="bloc choix-action">
+          <legend>Quand l'illustration est reconnue</legend>
+          <label><input type="radio" name="action" value="video"> 🎬 Jouer une vidéo sur l'illustration</label>
+          <label><input type="radio" name="action" value="son"> 🔊 Jouer un son</label>
+          <label><input type="radio" name="action" value="aucune"> Ne rien faire (pour l'instant)</label>
+        </fieldset>
+
+        <div id="reglages-video" class="reglages" hidden>
+          <div class="ligne-media">
+            <select id="page-video" class="champ"></select>
+            <label class="btn secondaire petit">Importer une vidéo
+              <input type="file" id="page-fichier-video" accept="video/*" hidden>
+            </label>
+          </div>
+          <video id="page-video-apercu" class="apercu-media" controls playsinline hidden></video>
+          <div class="grille-reglages">
+            <label>Taille <input type="range" id="v-taille" min="0.3" max="2.5" step="0.01" value="1"> <output></output></label>
+            <label>Décalage horizontal <input type="range" id="v-decalage-x" min="-1" max="1" step="0.01" value="0"> <output></output></label>
+            <label>Décalage vertical <input type="range" id="v-decalage" min="-1" max="1" step="0.01" value="0"> <output></output></label>
+            <label>Opacité <input type="range" id="v-opacite" min="0.2" max="1" step="0.05" value="1"> <output></output></label>
+            <label class="case"><input type="checkbox" id="v-boucle" checked> En boucle</label>
+            <label class="case"><input type="checkbox" id="v-son" checked> Avec le son de la vidéo</label>
+            <label class="case"><input type="checkbox" id="v-debut"> Reprendre au début à chaque détection</label>
+          </div>
+          <div class="chroma">
+            <label class="case"><input type="checkbox" id="v-chroma"> Fond vert transparent</label>
+            <label>Couleur <input type="color" id="v-chroma-couleur" value="#00ff00"></label>
+            <label>Tolérance <input type="range" id="v-chroma-tol" min="0.05" max="0.6" step="0.01" value="0.25"> <output></output></label>
+          </div>
+        </div>
+
+        <div id="reglages-son" class="reglages" hidden>
+          <div class="ligne-media">
+            <select id="page-son" class="champ"></select>
+            <label class="btn secondaire petit">Importer
+              <input type="file" id="page-fichier-son" accept="audio/*" hidden>
+            </label>
+            <button type="button" class="btn secondaire petit" id="page-enregistrer-son">● Enregistrer</button>
+          </div>
+          <audio id="page-son-apercu" class="apercu-media" controls hidden></audio>
+          <div class="grille-reglages">
+            <label>Volume <input type="range" id="s-volume" min="0" max="1" step="0.05" value="1"> <output></output></label>
+            <label class="case"><input type="checkbox" id="s-boucle"> En boucle</label>
+            <label class="case"><input type="checkbox" id="s-arret" checked> S'arrête quand l'illustration n'est plus visible</label>
+            <label class="case"><input type="checkbox" id="s-debut" checked> Reprendre au début à chaque détection</label>
+          </div>
+          <p class="info">Pour couper ou monter un son, passez par l'onglet <b>Studio son</b>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-pied">
+      <button type="button" class="btn danger-lien" id="page-supprimer">Supprimer la page</button>
+      <span class="espace"></span>
+      <button class="btn secondaire" value="annuler">Annuler</button>
+      <button class="btn primaire" value="ok" id="page-valider">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-camera" class="dlg">
+  <div class="dlg-corps">
+    <div class="dlg-tete">
+      <h2>Photographier l'illustration</h2>
+      <button class="btn rond" id="camera-fermer" aria-label="Fermer">✕</button>
+    </div>
+    <div class="cam-zone">
+      <video id="camera-video" autoplay playsinline muted></video>
+      <div class="cam-guide"></div>
+    </div>
+    <div class="dlg-pied">
+      <select id="camera-choix" class="champ"></select>
+      <span class="espace"></span>
+      <button class="btn primaire gros" id="camera-declencher">Prendre la photo</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlg-recadrage" class="dlg large">
+  <div class="dlg-corps">
+    <div class="dlg-tete">
+      <h2>Recadrer sur l'illustration</h2>
+    </div>
+    <p class="info">Faites glisser les coins ou les côtés du cadre orange, ou glissez à l'intérieur pour le déplacer. Gardez toute l'illustration, retirez la table et le texte.</p>
+    <div class="recadrage-zone"><canvas id="recadrage-canvas"></canvas></div>
+    <div class="dlg-pied">
+      <button class="btn lien" id="recadrage-tout">Toute l'image</button>
+      <button class="btn lien" id="recadrage-rotation">↻ Pivoter</button>
+      <span class="espace"></span>
+      <button class="btn secondaire" id="recadrage-annuler">Annuler</button>
+      <button class="btn primaire" id="recadrage-ok">Valider</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlg-micro" class="dlg">
+  <div class="dlg-corps">
+    <div class="dlg-tete"><h2>Enregistrer au micro</h2></div>
+    <div class="micro-zone">
+      <canvas id="micro-niveau" width="420" height="60"></canvas>
+      <div class="micro-temps" id="micro-temps">0:00</div>
+      <select id="micro-choix" class="champ"></select>
+    </div>
+    <div class="dlg-pied">
+      <button class="btn secondaire" id="micro-annuler">Annuler</button>
+      <span class="espace"></span>
+      <button class="btn primaire gros" id="micro-bouton">● Commencer</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlg-export" class="dlg">
+  <div class="dlg-corps">
+    <div class="dlg-tete">
+      <h2>Exporter / partager</h2>
+      <button class="btn rond" id="export-fermer" aria-label="Fermer">✕</button>
+    </div>
+    <p>Le fichier <b>.zip</b> contient les illustrations, les vidéos, les sons et les cibles déjà analysées. Ouvrez-le avec « Importer un livre » sur un autre appareil.</p>
+    <button class="btn primaire" id="export-zip">Télécharger le .zip</button>
+    <p class="info" id="export-etat"></p>
+    <hr>
+    <h3>QR code de lecture directe</h3>
+    <p class="info">Publiez le .zip en ligne (par exemple dans le dossier <code>livres/</code> du dépôt GitHub), collez son adresse : le QR code ouvre directement la lecture sur une tablette ou un téléphone.</p>
+    <input id="export-url" class="champ" placeholder="https://bibliogironde.github.io/Kit-AR-Livre-Augmente/livres/mon-livre.zip">
+    <div class="qr-zone" id="qr-zone"></div>
+    <a class="btn secondaire" id="qr-telecharger" download="qr-livre.svg" hidden>Télécharger le QR code (SVG)</a>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="attente" class="attente" hidden><div class="carte-attente"><div class="roue"></div><p id="attente-texte">Un instant…</p><progress id="attente-prog" max="100" hidden></progress></div></div>
+
+<script src="vendor/jszip.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

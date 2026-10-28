@@ -1,0 +1,13 @@
+{
+  "name": "Kit Livre Augmenté",
+  "short_name": "Livre Augmenté",
+  "description": "Faire parler les illustrations d'un livre : vidéos en réalité augmentée et sons déclenchés par la caméra.",
+  "lang": "fr",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f2e8",
+  "theme_color": "#1d3b4f",
+  "icons": [
+    { "src": "img/icone.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
