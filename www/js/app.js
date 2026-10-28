@@ -150,11 +150,12 @@ function editerPage(page, nouvelle) {
   brouillon.action.son = { ...OPTIONS_DEFAUT.son, ...(brouillon.action.son || {}) };
   $('#page-titre').value = brouillon.titre;
   $('#page-supprimer').hidden = nouvelle;
+  apercuImageVersion = null;
   rendreApercuImage();
   $$('input[name=action]').forEach((r) => (r.checked = r.value === brouillon.action.type));
   // réglages vidéo
   const o = brouillon.action.video;
-  $('#v-taille').value = o.taille; $('#v-decalage').value = o.decalage; $('#v-opacite').value = o.opacite;
+  $('#v-taille').value = o.taille; $('#v-decalage').value = o.decalage; $('#v-decalage-x').value = o.decalageX || 0; $('#v-opacite').value = o.opacite;
   $('#v-boucle').checked = o.boucle; $('#v-son').checked = o.son; $('#v-debut').checked = o.debut;
   $('#v-chroma').checked = o.chroma; $('#v-chroma-couleur').value = o.chromaCouleur; $('#v-chroma-tol').value = o.chromaTol;
   // réglages son
@@ -170,7 +171,49 @@ function rendreApercuImage() {
   const z = $('#page-apercu');
   z.innerHTML = brouillon.image ? `<img src="${urlDe(brouillon.image)}" alt="Illustration">` : '<span>Aucune illustration</span>';
   $('#page-recadrer').hidden = !brouillon.image;
+  majComposite();
 }
+
+// ---------- aperçu vidéo posée sur l'illustration ----------
+let apercu = null, apercuImageVersion = null;
+async function majComposite() {
+  if (!brouillon) return;
+  const a = brouillon.action;
+  const media = a.type === 'video' && a.mediaId ? etat.medias.get(a.mediaId) : null;
+  const visible = !!(media && brouillon.image);
+  $('#page-composite').hidden = !visible;
+  $('#page-apercu').hidden = visible;
+  $('#page-video-apercu').hidden = true; // remplacé par l'aperçu composite
+  if (!visible) { apercu?.arreter(); if (a.type === 'video' && media) $('#page-video-apercu').hidden = false; return; }
+  try {
+    if (!apercu) {
+      const { ApercuPage } = await import('./apercu.js');
+      apercu = new ApercuPage($('#composite-canvas'), (ch) => {
+        // l'utilisateur a déplacé / redimensionné la vidéo dans l'aperçu : on synchronise les curseurs
+        const ids = { taille: '#v-taille', decalage: '#v-decalage', decalageX: '#v-decalage-x' };
+        for (const [k, v] of Object.entries(ch)) { const el = $(ids[k]); if (el) { el.value = v; el.dispatchEvent(new Event('input')); } }
+      });
+    }
+    if (apercuImageVersion !== brouillon.imageVersion + ':' + brouillon.id) {
+      apercuImageVersion = brouillon.imageVersion + ':' + brouillon.id;
+      await apercu.definirPage(brouillon.image, brouillon.largeur, brouillon.hauteur);
+    }
+    apercu.definirOptions(brouillon.action.video);
+    apercu.definirVideo(media);
+    apercu.definirOptions(brouillon.action.video);
+    apercu.demarrer();
+    $('#composite-lecture').textContent = '❚❚';
+  } catch (e) {
+    console.error(e);
+    $('#page-composite').hidden = true; $('#page-apercu').hidden = false; $('#page-video-apercu').hidden = false;
+  }
+}
+$('#composite-lecture').onclick = () => {
+  if (!apercu) return;
+  const lit = apercu.basculerLecture();
+  $('#composite-lecture').textContent = lit ? '❚❚' : '▶';
+  $('#composite-lecture').setAttribute('aria-label', lit ? 'Pause' : 'Lecture');
+};
 
 function rendreSelecteursMedias() {
   const remplir = (sel, type, vide) => {
@@ -194,6 +237,7 @@ function majApercuMedia() {
   s.hidden = !(a.type === 'son' && m);
   if (a.type === 'video' && m) v.src = urlDe(m.blob);
   if (a.type === 'son' && m) s.src = urlDe(m.blob);
+  majComposite();
 }
 
 function majReglagesVisibles() {
@@ -217,12 +261,14 @@ const lierOption = (id, groupe, cle, fmt) => {
   const el = $(id);
   if (el.type === 'range') {
     lierSortie(el, fmt);
-    el.addEventListener('input', () => brouillon && (brouillon.action[groupe][cle] = parseFloat(el.value)));
-  } else if (el.type === 'checkbox') el.addEventListener('change', () => (brouillon.action[groupe][cle] = el.checked));
-  else el.addEventListener('input', () => (brouillon.action[groupe][cle] = el.value));
+    el.addEventListener('input', () => { if (brouillon) { brouillon.action[groupe][cle] = parseFloat(el.value); majOptionsApercu(groupe); } });
+  } else if (el.type === 'checkbox') el.addEventListener('change', () => { brouillon.action[groupe][cle] = el.checked; majOptionsApercu(groupe); });
+  else el.addEventListener('input', () => { brouillon.action[groupe][cle] = el.value; majOptionsApercu(groupe); });
 };
+const majOptionsApercu = (groupe) => { if (groupe === 'video' && apercu && !$('#page-composite').hidden) apercu.definirOptions(brouillon.action.video); };
 lierOption('#v-taille', 'video', 'taille', pct);
 lierOption('#v-decalage', 'video', 'decalage', (v) => (v > 0 ? '+' : '') + Math.round(v * 100) + ' %');
+lierOption('#v-decalage-x', 'video', 'decalageX', (v) => (v > 0 ? '+' : '') + Math.round(v * 100) + ' %');
 lierOption('#v-opacite', 'video', 'opacite', pct);
 lierOption('#v-boucle', 'video', 'boucle');
 lierOption('#v-son', 'video', 'son');
@@ -287,7 +333,7 @@ $('#page-supprimer').onclick = async () => {
   dlgPage.close('supprime');
 };
 dlgPage.addEventListener('close', async () => {
-  $('#page-video-apercu').pause(); $('#page-son-apercu').pause();
+  $('#page-video-apercu').pause(); $('#page-son-apercu').pause(); apercu?.arreter();
   if (dlgPage.returnValue !== 'ok' || !brouillon) return;
   brouillon.titre = brouillon.titre.trim() || 'Sans titre';
   const P = livreCourant.pages;

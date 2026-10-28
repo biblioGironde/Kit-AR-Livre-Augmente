@@ -138,7 +138,7 @@ output { font-variant-numeric: tabular-nums; color: var(--encre-2); font-size: .
 .dlg-pied { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
 .espace { flex: 1; }
 
-.page-edit { display: grid; grid-template-columns: minmax(240px, 1fr) 1.3fr; gap: 22px; }
+.page-edit { display: grid; grid-template-columns: minmax(260px, 1.1fr) 1.2fr; gap: 22px; }
 @media (max-width: 760px) { .page-edit { grid-template-columns: 1fr; } }
 .apercu-illus { aspect-ratio: 1; background: var(--papier-2); border-radius: 12px; display: grid; place-items: center; overflow: hidden; color: var(--encre-2); }
 .apercu-illus img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
@@ -248,3 +248,18 @@ progress { width: 100%; height: 10px; accent-color: var(--accent); }
 .roue { width: 36px; height: 36px; border: 4px solid var(--papier-2); border-top-color: var(--accent); border-radius: 50%; margin: 0 auto 12px; animation: tourne 0.9s linear infinite; }
 @keyframes tourne { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .viseur .cadre-viseur, .roue { animation: none; } }
+
+/* ---------- aperçu vidéo sur l'illustration ---------- */
+.apercu-composite { display: flex; flex-direction: column; gap: 6px; }
+#composite-canvas {
+  width: 100%; aspect-ratio: 1; display: block; border-radius: 12px; cursor: grab; touch-action: none;
+  background-color: #3a3f44;
+  background-image: linear-gradient(45deg, #34393d 25%, transparent 25%), linear-gradient(-45deg, #34393d 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #34393d 75%), linear-gradient(-45deg, transparent 75%, #34393d 75%);
+  background-size: 22px 22px; background-position: 0 0, 0 11px, 11px -11px, -11px 0;
+}
+#composite-canvas.saisi { cursor: grabbing; }
+.composite-barre { display: flex; align-items: center; gap: 8px; }
+.btn.rond.petit-rond { width: 32px; height: 32px; font-size: .8rem; flex: none; }
+.composite-aide { font-size: .8rem; color: var(--encre-2); line-height: 1.25; }
+.composite-legende { font-size: .78rem; color: var(--encre-2); }

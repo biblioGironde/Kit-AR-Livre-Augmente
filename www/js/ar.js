@@ -1,40 +1,7 @@
 // Lecture en réalité augmentée : reconnaissance des illustrations (MindAR) + vidéos plaquées + sons
-import * as THREE from 'three';
 import { MindARThree } from '../vendor/mindar/mindar-image-three.prod.js';
 import { urlDe } from './outils.js';
-
-const VERTEX = `
-varying vec2 vUv;
-void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
-
-// Incrustation : distance en chrominance (Cb/Cr) à la couleur de fond, avec bord adouci et anti-débordement
-const FRAGMENT = `
-uniform sampler2D map;
-uniform vec3 cle;
-uniform float tolerance;
-uniform float douceur;
-uniform float opacite;
-uniform bool chroma;
-varying vec2 vUv;
-vec2 cbcr(vec3 c) {
-  return vec2(-0.168736 * c.r - 0.331264 * c.g + 0.5 * c.b, 0.5 * c.r - 0.418688 * c.g - 0.081312 * c.b);
-}
-void main() {
-  vec4 c = texture2D(map, vUv);
-  float a = 1.0;
-  if (chroma) {
-    float d = distance(cbcr(c.rgb), cbcr(cle));
-    a = smoothstep(tolerance * 0.5, tolerance * 0.5 + douceur, d);
-    // réduit le liseré vert sur les bords
-    if (a < 1.0) { float m = (c.r + c.b) * 0.5; c.g = min(c.g, m + (c.g - m) * a); }
-  }
-  gl_FragColor = vec4(c.rgb, a * opacite);
-}`;
-
-function hexVersVec3(hex) {
-  const n = parseInt(hex.replace('#', ''), 16);
-  return new THREE.Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
-}
+import { creerPlanVideo } from './plan-video.js';
 
 export class LecteurAR {
   /**
@@ -88,29 +55,10 @@ export class LecteurAR {
         v.preload = 'auto';
         this.elements.push(v);
 
-        const tex = new THREE.VideoTexture(v);
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        this.textures.push(tex);
-        const mat = new THREE.ShaderMaterial({
-          uniforms: {
-            map: { value: tex },
-            cle: { value: hexVersVec3(o.chromaCouleur || '#00ff00') },
-            tolerance: { value: o.chromaTol ?? 0.25 },
-            douceur: { value: 0.08 },
-            opacite: { value: o.opacite ?? 1 },
-            chroma: { value: !!o.chroma },
-          },
-          vertexShader: VERTEX, fragmentShader: FRAGMENT,
-          transparent: true, depthWrite: false, side: THREE.DoubleSide,
-        });
-        const ratioVideo = media.largeur ? media.hauteur / media.largeur : 9 / 16;
-        // largeur 1 = largeur de l'illustration ; la vidéo est contenue dans l'illustration puis mise à l'échelle
-        let l = 1, h = ratioVideo;
-        if (h > ratioCible) { h = ratioCible; l = ratioCible / ratioVideo; }
-        const plan = new THREE.Mesh(new THREE.PlaneGeometry(l * o.taille, h * o.taille), mat);
-        plan.position.set(0, (o.decalage || 0) * ratioCible, 0.01);
-        ancre.group.add(plan);
+        const plan = creerPlanVideo(v, media, ratioCible);
+        plan.maj(o);
+        this.textures.push(plan);
+        ancre.group.add(plan.mesh);
 
         surTrouve = () => {
           if (o.debut || v.ended) v.currentTime = 0;
