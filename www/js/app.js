@@ -515,6 +515,21 @@ function localStorageEcrire(k, v) { try { localStorage.setItem('kla-' + k, v); }
 bus.addEventListener('livres', () => { rendreLivres(); if (livreCourant) { livreCourant = livreParId(livreCourant.id) || livreCourant; rendrePages(); } });
 bus.addEventListener('medias', () => { if (livreCourant) rendrePages(); if (brouillon && dlgPage.open) rendreSelecteursMedias(); });
 
+// =============== Écran d'accueil ===============
+function ouvrirAccueil() {
+  $('#accueil').hidden = false;
+  $('#accueil-masquer').checked = localStorageLire('accueil-masque') === '1';
+  setTimeout(() => $('#accueil-commencer').focus(), 50);
+}
+function fermerAccueil() {
+  localStorageEcrire('accueil-masque', $('#accueil-masquer').checked ? '1' : '0');
+  $('#accueil').hidden = true;
+}
+$('#accueil-commencer').onclick = fermerAccueil;
+$('#accueil').addEventListener('keydown', (e) => { if (e.key === 'Escape') fermerAccueil(); });
+$('#marque').onclick = ouvrirAccueil;
+$('#marque').onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ouvrirAccueil(); } };
+
 // =============== Démarrage ===============
 async function demarrer() {
   stockagePersistant();
@@ -526,6 +541,8 @@ async function demarrer() {
   const params = new URLSearchParams(location.search);
   const urlZip = params.get('livre');
   const idLocal = params.get('lire');
+  // écran d'accueil, sauf ouverture directe d'un livre (QR code) ou s'il a été masqué
+  if (!urlZip && !idLocal && localStorageLire('accueil-masque') !== '1') ouvrirAccueil();
   if (urlZip) {
     try {
       attente('Téléchargement du livre…');

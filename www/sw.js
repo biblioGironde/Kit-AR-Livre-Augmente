@@ -1,9 +1,9 @@
 // Service worker : permet d'utiliser l'appli hors connexion une fois ouverte (tablettes en atelier)
-const CACHE = 'kla-v5';
+const CACHE = 'kla-v6';
 const COQUILLE = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'img/icone.png',
   'js/app.js', 'js/outils.js', 'js/db.js', 'js/etat.js', 'js/photo.js', 'js/audio.js', 'js/studio.js',
-  'js/cibles.js', 'js/archive.js', 'js/ar.js', 'js/plan-video.js', 'js/apercu.js', 'js/video.js',
+  'js/cibles.js', 'js/archive.js', 'js/ar.js', 'js/plan-video.js', 'js/apercu.js', 'js/video.js', 'docs/fiche-animation-1-animateur.pdf',
   'vendor/jszip.min.js', 'vendor/qrcode.mjs', 'vendor/three/three.module.js', 'vendor/three/addons/renderers/CSS3DRenderer.js',
   'vendor/mindar/mindar-image.prod.js', 'vendor/mindar/mindar-image-three.prod.js',
   'vendor/mindar/controller-mGt1s8dJ.js', 'vendor/mindar/ui-fBadYuor.js',
