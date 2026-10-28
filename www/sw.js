@@ -1,5 +1,5 @@
 // Service worker : permet d'utiliser l'appli hors connexion une fois ouverte (tablettes en atelier)
-const CACHE = 'kla-v3';
+const CACHE = 'kla-v4';
 const COQUILLE = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'img/icone.png',
   'js/app.js', 'js/outils.js', 'js/db.js', 'js/etat.js', 'js/photo.js', 'js/audio.js', 'js/studio.js',
