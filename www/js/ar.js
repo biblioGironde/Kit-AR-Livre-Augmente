@@ -1,6 +1,6 @@
 // Lecture en réalité augmentée : reconnaissance des illustrations (MindAR) + vidéos plaquées + sons
 import { MindARThree } from '../vendor/mindar/mindar-image-three.prod.js';
-import { urlDe } from './outils.js';
+import { urlDe, attacherVideo } from './outils.js';
 import { creerPlanVideo } from './plan-video.js';
 
 // Filtre de lissage du suivi (One Euro) : minCF = lissage au repos, beta = réactivité quand la page bouge.
@@ -61,6 +61,8 @@ export class LecteurAR {
         v.setAttribute('playsinline', '');
         v.setAttribute('webkit-playsinline', '');
         v.preload = 'auto';
+        if (v.muted) v.setAttribute('muted', '');
+        attacherVideo(v);
         this.elements.push(v);
 
         const plan = creerPlanVideo(v, media, ratioCible);
@@ -156,7 +158,7 @@ export class LecteurAR {
     try { this.mindar.stop(); } catch {}
     for (const t of this.textures) t.dispose();
     try { this.mindar.renderer.dispose(); } catch {}
-    for (const el of this.elements) { el.removeAttribute('src'); el.load(); }
+    for (const el of this.elements) { el.removeAttribute('src'); el.load(); if (el.tagName === 'VIDEO') el.remove(); }
     this.elements = [];
     if (this.urlCibles) URL.revokeObjectURL(this.urlCibles);
     this.conteneur.innerHTML = '';

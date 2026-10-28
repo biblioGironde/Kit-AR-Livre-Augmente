@@ -42,9 +42,35 @@ export function hexVersVec3(hex) {
  * @returns {{mesh, texture, maj:(opts)=>void, dispose:()=>void}}
  */
 export function creerPlanVideo(video, media, ratioCible) {
-  const texture = new THREE.VideoTexture(video);
+  // Relais par un canvas 2D : chaque image de la vidéo y est recopiée puis envoyée au GPU.
+  // Plus robuste que VideoTexture sur mobile (Safari iOS, vidéos HDR) où la texture reste noire.
+  const relais = document.createElement('canvas');
+  const g2d = relais.getContext('2d');
+  const dimensionner = () => {
+    const l = video.videoWidth || media?.largeur || 16, h = video.videoHeight || media?.hauteur || 9;
+    const k = Math.min(1, 1280 / Math.max(l, h));
+    relais.width = Math.max(2, Math.round(l * k)); relais.height = Math.max(2, Math.round(h * k));
+  };
+  dimensionner();
+  const texture = new THREE.CanvasTexture(relais);
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = false;
+  let actif = true, derniere = -1, anim = 0;
+  const peindre = () => {
+    if (video.readyState >= 2 && (video.currentTime !== derniere || derniere < 0)) {
+      if (video.videoWidth && relais.width !== Math.round(video.videoWidth * Math.min(1, 1280 / Math.max(video.videoWidth, video.videoHeight)))) {
+        dimensionner();
+        texture.dispose(); // la texture est réallouée à la nouvelle taille au prochain rendu
+      }
+      try { g2d.drawImage(video, 0, 0, relais.width, relais.height); texture.needsUpdate = true; derniere = video.currentTime; } catch { /* image pas encore prête */ }
+    }
+  };
+  const boucle = () => { if (!actif) return; peindre(); anim = requestAnimationFrame(boucle); };
+  anim = requestAnimationFrame(boucle);
+  const forcer = () => { derniere = -1; peindre(); };
+  video.addEventListener('loadeddata', forcer);
+  video.addEventListener('seeked', forcer);
   const materiau = new THREE.ShaderMaterial({
     uniforms: {
       map: { value: texture },
@@ -80,6 +106,10 @@ export function creerPlanVideo(video, media, ratioCible) {
   return {
     mesh, texture, maj,
     taillePlan: () => ({ l: mesh.scale.x, h: mesh.scale.y }),
-    dispose() { texture.dispose(); materiau.dispose(); mesh.geometry.dispose(); },
+    dispose() {
+      actif = false; cancelAnimationFrame(anim);
+      video.removeEventListener('loadeddata', forcer); video.removeEventListener('seeked', forcer);
+      texture.dispose(); materiau.dispose(); mesh.geometry.dispose();
+    },
   };
 }
