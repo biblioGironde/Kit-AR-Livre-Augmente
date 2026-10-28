@@ -7,6 +7,8 @@ Faire parler les illustrations d'un livre : on photographie une illustration, on
 
 Tout reste dans l'appareil (IndexedDB). Rien n'est envoyé sur Internet.
 
+**Fiche animation** « Mon histoire augmentée » (1 h 30, 10 enfants, 1 animateur) : téléchargeable depuis l'écran d'accueil de l'appli ou directement [en PDF](www/docs/fiche-animation-1-animateur.pdf). Source HTML dans `docs/`, PDF régénéré par `python3 scripts/fiche-pdf.py`.
+
 ## Fonctionnalités
 
 | | |

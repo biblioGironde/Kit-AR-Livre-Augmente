@@ -16,7 +16,7 @@
 <body>
 
 <header class="barre">
-  <div class="marque" title="Kit Livre Augmenté">
+  <div class="marque" id="marque" title="Écran d'accueil" role="button" tabindex="0">
     <img src="img/icone.png" alt="" width="34" height="34">
     <span>Kit <b>Livre Augmenté</b></span>
   </div>
@@ -145,6 +145,7 @@
         <li><b>Lancez la lecture</b> : la première fois, l'appli analyse les illustrations (quelques secondes par page), puis il suffit de montrer le livre à la caméra.</li>
         <li><b>Partagez</b> : exportez le livre en .zip pour l'ouvrir sur une tablette ou un autre poste, ou publiez le .zip en ligne et imprimez le QR code à coller dans le livre.</li>
       </ol>
+      <p class="encart-fiche">Pour animer un atelier : <a href="docs/fiche-animation-1-animateur.pdf" download="Fiche-animation-Mon-histoire-augmentee-1-animateur.pdf">télécharger la fiche animation « Mon histoire augmentée » (1 animateur, PDF)</a>.</p>
       <h2>Bien choisir les illustrations</h2>
       <ul>
         <li>Les images riches en détails et contrastées sont les mieux reconnues. Les aplats de couleur, les ciels unis, les dessins très simples le sont mal.</li>
@@ -188,6 +189,37 @@
       <p id="demarrage-texte">La caméra va s'allumer.</p>
       <progress id="demarrage-progression" max="100" hidden></progress>
       <button class="btn primaire gros" id="demarrer">Démarrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ÉCRAN D'ACCUEIL ============ -->
+<div id="accueil" class="accueil" role="dialog" aria-modal="true" aria-labelledby="accueil-titre" hidden>
+  <div class="accueil-carte">
+    <div class="accueil-tete">
+      <img src="img/icone.png" alt="" width="72" height="72">
+      <div>
+        <h1 id="accueil-titre">Kit Livre Augmenté</h1>
+        <p>Faites parler les illustrations d'un livre : montrez la page à la caméra, une voix, un son ou une vidéo se déclenche.</p>
+      </div>
+    </div>
+    <ol class="accueil-etapes">
+      <li><span><b>Photographiez</b> une illustration du livre</span></li>
+      <li><span><b>Associez</b> une voix, un son ou une vidéo</span></li>
+      <li><span><b>Montrez</b> la page à la caméra : elle s'anime</span></li>
+    </ol>
+    <div class="accueil-fiche">
+      <div class="fiche-icone" aria-hidden="true">PDF</div>
+      <div class="fiche-texte">
+        <b>Fiche animation « Mon histoire augmentée »</b>
+        <span>Atelier de 1 h 30 · 10 enfants de 8 à 11 ans · <strong>1 seul animateur</strong>. Déroulé minuté, préparation, fiche enfant et carte mission à imprimer (6 pages).</span>
+      </div>
+      <a class="btn secondaire" id="accueil-fiche" href="docs/fiche-animation-1-animateur.pdf" download="Fiche-animation-Mon-histoire-augmentee-1-animateur.pdf">⬇ Télécharger la fiche</a>
+    </div>
+    <div class="accueil-pied">
+      <label class="case"><input type="checkbox" id="accueil-masquer"> Ne plus afficher au démarrage</label>
+      <span class="espace"></span>
+      <button class="btn primaire gros" id="accueil-commencer">Commencer</button>
     </div>
   </div>
 </div>

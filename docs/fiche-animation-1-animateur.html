@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fiche animation — Mon histoire augmentée (1 animateur)</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+  :root { --nuit: #1d3b4f; --accent: #e0703a; --papier: #f7f2e8; --papier2: #efe7d8; --trait: #d9cfbd; --encre: #1f2933; --encre2: #5b6470; }
+  * { box-sizing: border-box; }
+  body { font-family: "Atkinson Hyperlegible", "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--encre); font-size: 10pt; line-height: 1.38; margin: 0; }
+  h1, h2, h3 { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; color: var(--nuit); margin: 0; }
+  h1 { font-size: 24pt; line-height: 1.1; }
+  h2 { font-size: 14pt; margin: 13pt 0 5pt; padding-bottom: 3pt; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 11.5pt; margin: 10pt 0 4pt; }
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 6pt; padding-left: 16pt; }
+  li { margin-bottom: 2.5pt; }
+  table { width: 100%; border-collapse: collapse; margin: 4pt 0 7pt; font-size: 9.2pt; }
+  th, td { border: 1px solid var(--trait); padding: 3pt 5pt; vertical-align: top; text-align: left; }
+  th { background: var(--papier2); font-weight: 700; }
+  td.h { white-space: nowrap; font-weight: 700; color: var(--nuit); }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .bandeau { background: var(--nuit); color: #fff; border-radius: 10pt; padding: 14pt 16pt; margin-bottom: 10pt; display: flex; gap: 14pt; align-items: center; }
+  .bandeau h1 { color: #fff; }
+  .bandeau .sur { font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; color: #f6c8a8; margin-bottom: 3pt; font-weight: 700; }
+  .bandeau p { margin: 5pt 0 0; color: #dbe7ee; }
+  .bandeau img { width: 58pt; height: 58pt; border-radius: 12pt; flex: none; }
+  .chiffres { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6pt; margin: 8pt 0; }
+  .chiffre { background: var(--papier); border: 1px solid var(--trait); border-radius: 8pt; padding: 7pt 8pt; }
+  .chiffre b { display: block; font-size: 16pt; color: var(--accent); font-family: Georgia, serif; line-height: 1.1; }
+  .chiffre span { font-size: 8.8pt; color: var(--encre2); }
+  .regle { border: 2px solid var(--accent); border-radius: 10pt; padding: 8pt 12pt; background: #fff7f1; margin: 6pt 0 8pt; }
+  .regle h3 { margin-top: 0; color: var(--accent-fonce, #b9531f); }
+  .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; }
+  .case { display: inline-block; width: 9pt; height: 9pt; border: 1.2px solid var(--encre); border-radius: 2px; margin-right: 5pt; vertical-align: -1pt; }
+  .check li { list-style: none; margin-left: -14pt; }
+  .note { color: var(--encre2); font-size: 9pt; }
+  .pied { position: fixed; bottom: -9mm; left: 0; right: 0; font-size: 7.8pt; color: var(--encre2); display: flex; justify-content: space-between; }
+  /* fiche enfant */
+  .enfant h1 { font-size: 22pt; margin-bottom: 2pt; }
+  .enfant .sous { color: var(--encre2); margin-bottom: 10pt; }
+  .ligne { border-bottom: 1.2px dotted #9a9182; height: 22pt; }
+  .champ { display: flex; gap: 6pt; align-items: flex-end; margin-bottom: 8pt; font-weight: 700; }
+  .champ .ligne { flex: 1; height: 16pt; }
+  .bloc { border: 1.5px solid var(--nuit); border-radius: 10pt; padding: 9pt 12pt; margin-bottom: 10pt; }
+  .bloc h2 { border: 0; margin: 0 0 4pt; padding: 0; font-size: 13pt; }
+  .bloc .q { font-weight: 700; margin-top: 4pt; }
+  .choix { display: flex; gap: 14pt; margin: 4pt 0 6pt; font-size: 11pt; }
+  .choix span { border: 1.5px solid var(--encre2); border-radius: 20pt; padding: 3pt 10pt; }
+  .coches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6pt; font-size: 9.5pt; }
+  .coches div { border: 1px solid var(--trait); border-radius: 8pt; padding: 6pt; text-align: center; }
+  .coches .case { display: block; margin: 0 auto 4pt; width: 14pt; height: 14pt; }
+  /* carte mission */
+  .mission h1 { font-size: 26pt; text-align: center; margin-bottom: 4pt; }
+  .mission .sous { text-align: center; color: var(--encre2); margin-bottom: 12pt; font-size: 12pt; }
+  .etapes-m { list-style: none; padding: 0; margin: 0; counter-reset: e; }
+  .etapes-m li { counter-increment: e; display: flex; gap: 12pt; align-items: flex-start; border: 1.5px solid var(--trait); border-radius: 12pt; padding: 10pt 12pt; margin-bottom: 8pt; font-size: 12.5pt; }
+  .etapes-m li::before { content: counter(e); flex: none; width: 30pt; height: 30pt; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 15pt; display: grid; place-items: center; }
+  .etapes-m b { color: var(--nuit); }
+  .aide-m { display: flex; gap: 12pt; margin-top: 10pt; }
+  .aide-m div { flex: 1; border-radius: 12pt; padding: 10pt 12pt; font-size: 11.5pt; }
+  .rouge { background: #fde8e1; border: 1.5px solid #e0703a; }
+  .bleu { background: #e6eff4; border: 1.5px solid var(--nuit); }
+</style>
+</head>
+<body>
+
+
+<!-- ================= PAGE 1 ================= -->
+<section class="page">
+  <div class="bandeau">
+    <img src="../build/icon.png" alt="">
+    <div>
+      <div class="sur">Fiche animation · 1 animateur</div>
+      <h1>Mon histoire augmentée</h1>
+      <p>Chaque enfant choisit un album de la bibliothèque et en fait sa propre histoire, racontée par sa voix et déclenchée en montrant les illustrations à la caméra.</p>
+    </div>
+  </div>
+
+  <div class="chiffres">
+    <div class="chiffre"><b>1 h 30</b><span>+ 1 h de préparation la veille</span></div>
+    <div class="chiffre"><b>10 enfants</b><span>8–11 ans, en 5 binômes</span></div>
+    <div class="chiffre"><b>1 adulte</b><span>animateur seul</span></div>
+    <div class="chiffre"><b>2 images</b><span>animées par enfant, maximum</span></div>
+  </div>
+
+  <table>
+    <tr><th style="width:28%">Lieu</th><td>Espace jeunesse, 5 tables-postes visibles depuis le centre de la salle</td></tr>
+    <tr><th>Outil</th><td>Kit Livre Augmenté (appli web <b>bibliogironde.github.io/Kit-AR-Livre-Augmente</b> ou appli de bureau)</td></tr>
+    <tr><th>Production</th><td>1 livre augmenté par enfant : 2 illustrations qui parlent ou font du bruit</td></tr>
+  </table>
+
+  <h2>Objectifs</h2>
+  <ul>
+    <li><b>Lire et regarder autrement</b> : observer une illustration en détail pour y trouver une autre histoire que celle du texte.</li>
+    <li><b>Raconter</b> : écrire puis dire à voix haute un court récit (5 phrases maximum par image).</li>
+    <li><b>Créer avec le numérique</b> : photographier, enregistrer sa voix, associer un son à une image, tester en réalité augmentée.</li>
+    <li><b>Faire découvrir le fonds</b> : chaque enfant repart avec l'envie d'emprunter l'album qu'il a détourné.</li>
+  </ul>
+
+  <h2>Règle du jeu</h2>
+  <div class="regle">
+    <h3>2 illustrations, 2 sons par enfant — pas de vidéo</h3>
+    <table>
+      <tr><th>Déclencheur</th><th>Contenu</th><th>Durée max</th></tr>
+      <tr><td><b>Image 1 : la voix</b></td><td>L'enfant raconte le début de son histoire</td><td>30 s</td></tr>
+      <tr><td><b>Image 2 : au choix</b></td><td>La suite racontée avec sa voix, <b>ou</b> un bruitage choisi dans la banque de sons préparée</td><td>30 s</td></tr>
+    </table>
+    <ul>
+      <li>Les images se choisissent <b>parmi les pages marquées d'une gommette</b> (testées la veille : elles sont reconnues à coup sûr).</li>
+      <li><b>3 essais d'enregistrement maximum</b>, une seule prise gardée.</li>
+      <li>Pas de vidéo : seul, l'animateur ne peut pas encadrer un tournage en même temps que les postes.</li>
+    </ul>
+  </div>
+  <p class="note">Pourquoi limiter : 10 enfants × 2 sons = 20 enregistrements en 35 minutes de production, soit 17 minutes de poste par enfant. Moins de pages, c'est aussi une meilleure reconnaissance : deux illustrations trop semblables se confondent.</p>
+</section>
+
+<!-- ================= PAGE 2 ================= -->
+<section class="page">
+  <h2 style="margin-top:0">Matériel</h2>
+  <table>
+    <tr><th>Matériel</th><th style="width:12%">Qté</th><th>Remarque</th></tr>
+    <tr><td>Ordinateur portable avec webcam, ou tablette</td><td>5</td><td>Appli installée ou ouverte une fois avec Internet (elle marche ensuite hors connexion)</td></tr>
+    <tr><td>Casque-micro (ou micro USB)</td><td>5</td><td>Un par poste : on enregistre à sa place, sans coin séparé</td></tr>
+    <tr><td>Webcam sur pied (type GorillaPod)</td><td>1 à 5</td><td>Pour un ordinateur : caméra au-dessus du livre posé à plat</td></tr>
+    <tr><td>Albums présélectionnés</td><td>15–20</td><td>3 à 4 doubles pages marquées d'une gommette dans chacun</td></tr>
+    <tr><td>Gommettes</td><td>1 planche</td><td>Pour marquer les pages validées</td></tr>
+    <tr><td>Banque de bruitages</td><td>15–20 sons</td><td>Porte, pluie, rire, loup, orage, pas, vent… importés sur chaque poste</td></tr>
+    <tr><td>Panneau « On enregistre »</td><td>5</td><td>Posé sur la table pendant un enregistrement : les voisins se taisent</td></tr>
+    <tr><td>Gobelet rouge</td><td>5</td><td>Posé sur le poste quand le binôme a besoin d'aide</td></tr>
+    <tr><td>Carte mission (page 5)</td><td>5</td><td>À chaque poste, imprimée en A4</td></tr>
+    <tr><td>Fiche enfant (page 4)</td><td>12</td><td>2 de rab</td></tr>
+    <tr><td>Vidéoprojecteur ou grand écran</td><td>1</td><td>Démo d'ouverture et restitution</td></tr>
+    <tr><td>Lampe d'appoint, crayons, post-it</td><td>—</td><td>Lumière homogène, sans reflet sur papier glacé</td></tr>
+  </table>
+  <p class="note">Disposition : un cercle au centre pour l'accueil et la restitution, les 5 postes le long des murs, tous visibles depuis le centre.</p>
+
+  <h2>Préparation</h2>
+  <div class="deux">
+    <div>
+      <h3>Une semaine avant</h3>
+      <ul class="check">
+        <li><span class="case"></span>Présélectionner 15 à 20 albums aux illustrations détaillées et contrastées (éviter aplats, ciels unis, papier très brillant).</li>
+        <li><span class="case"></span>Faire signer l'autorisation d'enregistrement de la voix par les familles.</li>
+        <li><span class="case"></span>Préparer le livre de démonstration : une page qui parle, une page avec un bruitage (et une vidéo si vous en avez une prête : l'effet « magique » marche très bien).</li>
+        <li><span class="case"></span>Rassembler ou enregistrer la banque de 15 à 20 bruitages.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>La veille (environ 1 h)</h3>
+      <ul class="check">
+        <li><span class="case"></span>Tester 3 à 4 doubles pages par album dans l'appli et coller une gommette sur celles reconnues.</li>
+        <li><span class="case"></span>Installer l'appli sur les 5 postes, autoriser caméra et micro, suivi « équilibré ».</li>
+        <li><span class="case"></span>Créer les 10 livres au prénom des enfants inscrits (2 par poste).</li>
+        <li><span class="case"></span>Importer la banque de bruitages sur les 5 postes.</li>
+        <li><span class="case"></span>Imprimer fiches enfant et cartes mission ; recharger les appareils.</li>
+      </ul>
+      <h3>Le jour J (30 min avant)</h3>
+      <ul class="check">
+        <li><span class="case"></span>Installer postes, casques, panneaux et gobelets ; tester un micro.</li>
+        <li><span class="case"></span>Disposer les albums face visible.</li>
+        <li><span class="case"></span>Lancer la démo une fois sur le grand écran.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE 3 ================= -->
+<section class="page">
+  <h2 style="margin-top:0">Déroulé minuté</h2>
+  <table>
+    <tr><th style="width:13%">Horaire</th><th style="width:20%">Étape</th><th>Les enfants</th><th style="width:30%">L'animateur</th></tr>
+    <tr><td class="h">0:00 – 0:10</td><td><b>Accueil et démo</b></td><td>Découvrent le livre de démo : on montre la page, elle parle</td><td>Présente la règle des 2 images, le gobelet rouge et le panneau ; forme les 5 binômes</td></tr>
+    <tr><td class="h">0:10 – 0:20</td><td><b>Choisir son album et ses 2 images</b></td><td>Choisissent 1 album et 2 pages à gommette, marquées d'un post-it</td><td>Circule, aide les indécis ; vérifie que les 2 pages sont bien différentes</td></tr>
+    <tr><td class="h">0:20 – 0:35</td><td><b>Écrire son histoire</b></td><td>Remplissent la fiche ; 5 phrases max par image ; lisent à leur binôme qui chronomètre (≤ 30 s)</td><td>Passe de binôme en binôme, aide à l'écriture</td></tr>
+    <tr><td class="h">0:35 – 1:10</td><td><b>Produire</b> (17 min par enfant)</td><td>Suivent la carte mission : photo des 2 images, enregistrement au casque, choix du bruitage, test</td><td>Circule et répond aux gobelets rouges dans l'ordre ; vérifie chaque livre testé</td></tr>
+    <tr><td class="h">1:10 – 1:25</td><td><b>Restitution</b></td><td>Chacun présente son livre au grand écran : 1 min par enfant</td><td>Projette, enchaîne les passages, fait applaudir</td></tr>
+    <tr><td class="h">1:25 – 1:30</td><td><b>Clôture</b></td><td>Disent ce qu'ils ont préféré ; empruntent leur album s'ils le souhaitent</td><td>Recueille les retours ; exporte les livres <b>après</b> le départ des enfants (10 min)</td></tr>
+  </table>
+  <p>Dans le binôme : l'un tient le livre et cadre, l'autre manipule l'appli ; on inverse à mi-temps (0:52). Pendant qu'un enfant enregistre, l'autre pose le panneau « On enregistre » et attend en silence.</p>
+
+  <h2>Tenir seul : les bons réflexes</h2>
+  <ul>
+    <li><b>Toujours au centre de la salle</b> entre deux interventions : tous les postes restent dans votre champ de vision.</li>
+    <li><b>Gobelet rouge = file d'attente</b> : on répond dans l'ordre, 1 minute maximum par intervention ; si c'est plus long, on y revient.</li>
+    <li><b>Les pages à gommette</b> évitent l'essentiel des pannes : refusez une page non marquée pendant la séance.</li>
+    <li><b>Le premier binôme qui a fini</b> devient « expert » et aide un autre poste.</li>
+    <li>Si le groupe vient avec un enseignant ou un animateur de centre de loisirs, confiez-lui l'aide à l'écriture : c'est là qu'un second adulte aide le plus. Vérifiez le taux d'encadrement exigé par la structure qui envoie les enfants.</li>
+  </ul>
+
+</section>
+
+<!-- ================= PAGE 4 : FICHE ENFANT ================= -->
+<section class="page enfant">
+  <h1>Mon histoire en 2 images</h1>
+  <p class="sous">Je choisis un album, 2 pages à gommette, et j'invente MON histoire.</p>
+  <div class="champ">Mon prénom :<div class="ligne"></div>Mon binôme :<div class="ligne"></div></div>
+  <div class="champ">Mon album :<div class="ligne"></div></div>
+  <div class="champ">Page de l'image 1 :<div class="ligne" style="flex:.3"></div>Page de l'image 2 :<div class="ligne" style="flex:.3"></div></div>
+  <div class="champ">Le titre de MON histoire :<div class="ligne"></div></div>
+
+  <div class="bloc">
+    <h2>Image 1 — je raconte avec ma voix</h2>
+    <p class="note">30 secondes, 5 phrases maximum.</p>
+    <div class="q">Qui est là ?</div><div class="ligne"></div>
+    <div class="q">Où sommes-nous ?</div><div class="ligne"></div>
+    <div class="q">Que se passe-t-il ?</div><div class="ligne"></div><div class="ligne"></div><div class="ligne"></div>
+  </div>
+
+  <div class="bloc">
+    <h2>Image 2 — je choisis UNE seule chose</h2>
+    <div class="choix"><span>La suite avec ma voix</span><span>Un bruitage de la banque de sons</span></div>
+    <div class="q">Ce que l'on entend :</div><div class="ligne"></div><div class="ligne"></div><div class="ligne"></div>
+    <div class="q">Ma fin :</div><div class="ligne"></div><div class="ligne"></div>
+  </div>
+
+  <div class="q" style="font-weight:700;margin-bottom:5pt">Je coche quand c'est fait :</div>
+  <div class="coches">
+    <div><span class="case"></span>Image 1 photographiée</div>
+    <div><span class="case"></span>Voix enregistrée</div>
+    <div><span class="case"></span>Image 2 photographiée</div>
+    <div><span class="case"></span>Son ajouté</div>
+    <div><span class="case"></span>Testé avec la caméra</div>
+  </div>
+</section>
+
+<!-- ================= PAGE 5 : CARTE MISSION ================= -->
+<section class="page mission">
+  <h1>Carte mission</h1>
+  <p class="sous">À suivre dans l'ordre, avec ton binôme. Vous échangez les rôles à mi-temps.</p>
+  <ol class="etapes-m">
+    <li><div><b>Ouvre ton livre</b> dans « Mes livres » : il porte ton prénom. Clique sur <b>Modifier</b>.</div></li>
+    <li><div><b>+ Ajouter une page</b>, puis <b>📷 Photographier</b>. Le livre est à plat, la page remplit l'écran, pas de reflet.</div></li>
+    <li><div><b>Recadre</b> : fais glisser les coins orange autour de l'image seule, sans le texte. Puis <b>Valider</b>.</div></li>
+    <li><div>Choisis <b>🔊 Jouer un son</b>, puis <b>● Enregistrer</b>. Pose le panneau « On enregistre ». Attends 1 seconde, puis lis ta fiche, près du micro.</div></li>
+    <li><div>Écoute-toi. Pas content ? Recommence (3 essais maximum). Puis <b>Enregistrer</b> la page.</div></li>
+    <li><div>Recommence les étapes 2 à 5 pour l'<b>image 2</b> : ta voix, ou un bruitage choisi dans la liste.</div></li>
+    <li><div><b>▶ Lire en réalité augmentée</b>, puis <b>Démarrer</b> : montre tes 2 pages à la caméra. Ça parle ? Bravo, c'est fini !</div></li>
+  </ol>
+  <div class="aide-m">
+    <div class="rouge"><b>Besoin d'aide ?</b><br>Pose le gobelet rouge sur ta table. L'animateur arrive.</div>
+    <div class="bleu"><b>Fini en avance ?</b><br>Deviens « expert » : va aider un autre binôme.</div>
+  </div>
+</section>
+
+<!-- ================= PAGE 6 ================= -->
+<section class="page">
+  <h2 style="margin-top:0">Aide-mémoire technique (animateur)</h2>
+  <ol>
+    <li><b>Mes livres → + Nouveau livre</b> : titre = prénom de l'enfant (créés la veille).</li>
+    <li><b>+ Ajouter une page → Photographier</b> : livre à plat, caméra au-dessus ; recadrer sur l'image seule en faisant glisser coins et côtés.</li>
+    <li><b>Jouer un son → ● Enregistrer</b> : parler près du micro, attendre 1 seconde avant de commencer.</li>
+    <li>Bruitage : choisir le son dans la liste déroulante de la page (banque importée la veille par <b>Studio son → Importer des sons</b>).</li>
+    <li>Si besoin, <b>Studio son → Monter</b> pour couper le silence du début et de la fin, puis <b>Enregistrer dans la sonothèque</b>.</li>
+    <li><b>▶ Lire en réalité augmentée</b> : la première fois, l'analyse prend quelques secondes par image.</li>
+  </ol>
+  <p>Réglage de lecture, en haut de l'écran : suivi <b>équilibré</b> par défaut ; <b>réactif</b> si le son tarde à se déclencher ; <b>stable</b> si la détection clignote.</p>
+
+  <h2>Si ça coince</h2>
+  <table>
+    <tr><th style="width:38%">Situation</th><th>Solution</th></tr>
+    <tr><td>L'illustration n'est pas reconnue</td><td>Re-photographier de plus près, mieux éclairée, recadrer serré ; sinon prendre une autre page à gommette</td></tr>
+    <tr><td>Un enfant n'arrive pas à écrire</td><td>Il raconte à l'oral, son binôme note 3 mots-clés qu'il suit en enregistrant</td></tr>
+    <tr><td>Un enfant veut plus de 2 sons</td><td>Rappeler la règle ; proposer une 2e séance</td></tr>
+    <tr><td>Retard sur l'horaire</td><td>Le 2e déclencheur devient un bruitage (30 s gagnées par enfant) ; restitution à 30 s par enfant</td></tr>
+    <tr><td>Seulement 3 postes</td><td>2 groupes : pendant que l'un produit (2 × 17 min), l'autre dessine la couverture de son histoire</td></tr>
+  </table>
+  <p class="note"><b>Variante 7–8 ans</b> : une seule image (la voix), écriture remplacée par 3 mots-clés dessinés. <b>Variante 2 séances</b> : séance 1 = choix et écriture ; séance 2 = production et restitution.</p>
+
+  <h2>Après l'atelier</h2>
+  <ul>
+    <li><b>Garder les livres</b> : exporter chaque livre en .zip (<b>Exporter / partager</b>) dans un dossier de l'atelier ; ils se rouvrent sur n'importe quel poste avec « Importer un livre ».</li>
+    <li><b>Montrer aux familles</b> : laisser un poste en consultation à côté des albums pendant une ou deux semaines.</li>
+    <li><b>Droits</b> : les photos d'illustrations et les voix d'enfants restent dans la bibliothèque. Ne pas publier les .zip en ligne ni générer de QR code public : les illustrations appartiennent aux éditeurs, et la diffusion des voix demande l'accord des familles.</li>
+    <li><b>Bilan</b> : nombre d'enfants, albums choisis (et empruntés ensuite), temps réel de chaque étape, pages non reconnues, nombre de gobelets rouges — pour ajuster la prochaine séance.</li>
+  </ul>
+</section>
+
+</body>
+</html>
