@@ -76,4 +76,6 @@ Les applis ne sont pas signées :
 
 ## Licences
 
-Code du kit : MIT. MindAR (MIT), three.js (MIT), JSZip (MIT/GPLv3), qrcode-generator (MIT).
+- **Code** : © Département de la Gironde — biblio.gironde, sous licence [GNU Affero General Public License v3.0](LICENSE) ou ultérieure (AGPL-3.0-or-later). Vous pouvez le réutiliser et le modifier ; toute version modifiée, redistribuée ou mise en ligne, doit être publiée sous la même licence, avec son code source.
+- **Fiche d'animation et textes** : [Licence Ouverte Etalab 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/), réutilisation libre, y compris commerciale, avec mention de la source « biblio.gironde ».
+- Bibliothèques intégrées : MindAR (MIT), three.js (MIT), JSZip (MIT ou GPLv3), qrcode-generator (MIT).
